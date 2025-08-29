@@ -1,39 +1,83 @@
-// heart counter
-
-document
-  .getElementsByClassName("heart-icon")[0]
-  .addEventListener("click", function () {
-    let heartCount = parseInt(
-      document.getElementsByClassName("heart-count")[0].innerText
-    );
+//  Heart counter
+document.querySelectorAll(".heart-icon").forEach((icon) => {
+  icon.addEventListener("click", () => {
+    const heartCountEl = document.querySelector(".heart-count");
+    let heartCount = parseInt(heartCountEl.innerText) || 0;
     heartCount++;
-
-    document.getElementsByClassName("heart-count")[0].innerText = heartCount;
-  });
-
-// copy button
-document.getElementById("copy-btn").addEventListener("click", function () {
-  const copyText = document.getElementById("copy-content").innerText;
-  navigator.clipboard.writeText(copyText).then(function () {
-    console.log("Copied to clipboard: " + copyText);
-    const copyCount = parseInt(document.getElementById("copy-count").innerText);
-    document.getElementById("copy-count").innerText = copyCount + 1;
+    heartCountEl.innerText = heartCount;
   });
 });
 
-// call button
-document.getElementById("call-btn").addEventListener("click", function () {
-  const callNumber = document.getElementById("call-content").innerText;
-  const copyNumber = document.getElementById("copy-content").innerText;
-  alert("Calling: " + callNumber + " - " + copyNumber);
+//  Copy button
+document.querySelectorAll(".copy-btn").forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    const copyText =
+      document.querySelectorAll(".copy-content")[index].innerText;
+    navigator.clipboard.writeText(copyText).then(() => {
+      console.log("Copied to clipboard: " + copyText);
+      alert("Number Copied: " + copyText);
+
+      //  copy counter
+      const copyCountEl = document.getElementById("copy-count");
+      let copyCount = parseInt(copyCountEl.innerText);
+      copyCountEl.innerText = copyCount + 1;
+    });
+  });
 });
-// balance feature
-document.getElementById("call-btn").addEventListener("click", function () {
-  const balance = document.getElementById("call-currency");
-  let currency = parseInt(balance.innerText);
-  currency = Math.max(0, currency - 20); // Prevent negative currency
-  balance.innerText = currency;
-  if (currency === 0) {
-    alert("Insufficient balance");
-  }
+
+//  Call button
+document.querySelectorAll(".call-btn").forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    const callNumber =
+      document.querySelectorAll(".call-content")[index].innerText;
+    const copyNumber =
+      document.querySelectorAll(".copy-content")[index].innerText;
+
+    alert("Calling: " + callNumber + " - " + copyNumber + "...");
+
+    // Balance feature
+    const balanceEl = document.getElementById("call-currency");
+    let currency = parseInt(balanceEl.innerText);
+    currency = Math.max(0, currency - 20);
+    balanceEl.innerText = currency;
+    if (currency === 0) {
+      alert("Insufficient balance");
+    }
+
+    // History feature
+    const historyContainer = document.getElementById("history-container");
+    const historyCard = document.createElement("div");
+    historyCard.className =
+      "h-20 bg-gray-100 rounded-md p-4 flex justify-between items-center mb-4";
+
+    // Info feature
+    const cardInfo = document.createElement("div");
+    const title = document.createElement("h1");
+    title.className = "text-lg font-bold";
+    title.innerText = callNumber;
+    const content = document.createElement("p");
+    content.innerText = copyNumber;
+    cardInfo.appendChild(title);
+    cardInfo.appendChild(content);
+
+    // Time feature
+    const time = document.createElement("div");
+    time.className = "text-sm text-gray-500";
+    const now = new Date();
+    time.innerText = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    historyCard.appendChild(cardInfo);
+    historyCard.appendChild(time);
+
+    historyContainer.appendChild(historyCard);
+  });
+});
+
+// Clear history
+document.getElementById("clear-btn").addEventListener("click", () => {
+  document.getElementById("history-container").innerHTML = "";
 });
